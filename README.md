@@ -20,7 +20,7 @@ pip install requirements.txt
 
 
 
-## GRN prediction
+# GRN prediction
 
 1.Activate the graph GRN prediction environment `conda activate environment2`
 
