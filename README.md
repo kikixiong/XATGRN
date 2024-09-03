@@ -14,7 +14,7 @@ pip install requirements.txt
 
 # Graph Embedding
 
-1.Activate the graph embedding environment `conda activate environment1`
+1. Activate the graph embedding environment `conda activate environment1`
 2. Navigate to `./code/` directory
 3. Excute the python `./train_edge/train.py` 
 
@@ -23,6 +23,7 @@ pip install requirements.txt
 ## GRN prediction
 
 1.Activate the graph GRN prediction environment `conda activate environment2`
+
 ### Shell excution
 **确保脚本有执行权限并执行脚本**：
 
