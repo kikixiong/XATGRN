@@ -4,11 +4,19 @@
 
 
 
+
 ## Environment Setup
 
 ```
-pip install requirements.txt
+conda env create -f duplexenvironment.yaml
 ```
+
+
+
+```
+conda env create -f grnenvironment.yaml
+```
+
 
 
 
