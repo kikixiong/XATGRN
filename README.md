@@ -21,6 +21,18 @@ pip install requirements.txt
 
 ## GRN prediction
 
+
+### Shell excution
+**确保脚本有执行权限并执行脚本**：
+
+```
+bash
+chmod +x run_all_datasets.sh
+
+./run_all_datasets.sh
+
+```
+### Manual excution
 There are 9 datasets to be evaluated, and each dataset script needs to be executed manually.
 
 **example usage for DREAM5net1 datasets**
@@ -32,6 +44,8 @@ python DeepFGRN_DREAM5net1_FCV.py
 ```
 
 Finally, check output folder "results" for results. The csv file shows the mean and standard deviation of AUROC, MCC, F1, Recall, Precision  on this dataset.
+
+
 
 
 
