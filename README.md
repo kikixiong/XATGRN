@@ -12,7 +12,7 @@ pip install requirements.txt
 
 
 
-# Graph Embedding
+# 1. Graph Embedding
 
 1. Activate the graph embedding environment `conda activate environment1`
 2. Navigate to `./code/` directory
@@ -20,7 +20,7 @@ pip install requirements.txt
 
 
 
-# GRN prediction
+# 2. GRN prediction
 
 1.Activate the graph GRN prediction environment `conda activate environment2`
 
