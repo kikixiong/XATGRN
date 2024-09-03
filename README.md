@@ -22,7 +22,7 @@ conda env create -f grnenvironment.yaml
 
 # 1. Graph Embedding
 
-1. Activate the graph embedding environment `conda activate environment1`
+1. Activate the graph embedding environment `conda activate duplex`
 2. Navigate to `./code/` directory
 3. Excute the python `./train_edge/train.py` 
 
@@ -30,7 +30,7 @@ conda env create -f grnenvironment.yaml
 
 # 2. GRN prediction
 
-1.Activate the graph GRN prediction environment `conda activate environment2`
+1.Activate the graph GRN prediction environment `conda activate grn`
 
 ### Shell excution
 **确保脚本有执行权限并执行脚本**：
