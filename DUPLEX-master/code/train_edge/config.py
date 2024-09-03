@@ -2,8 +2,8 @@ import torch
 import argparse
 import pdb
 
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device('cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device('cpu')
 if device.type == 'cpu':
     num_workers = 0
     use_uva = False
