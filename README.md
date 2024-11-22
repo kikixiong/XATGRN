@@ -1,8 +1,5 @@
 # GRN
 
-由于两个过程中的torch和dgl的版本冲突原因需要配两个环境、其中一个是用于DUPLEX进行graph embedding，分别在GRN和DUPLEX-master文件夹中都导出了对应环境的配置`requirements.txt`
-
-
 
 
 ## Environment Setup
