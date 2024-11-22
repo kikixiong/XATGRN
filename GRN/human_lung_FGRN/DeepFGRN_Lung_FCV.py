@@ -9,8 +9,10 @@ from sklearn.metrics import confusion_matrix, f1_score,accuracy_score,recall_sco
 import three_utils_2_single
 import corrresnet_pred_224 as corrresnet_pred
 import os
-os.environ['CUDA_VISIBLE_DEVICES']="0"
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+os.environ['CUDA_VISIBLE_DEVICES']="0"
 import argparse
 def parse_config():
     parser = argparse.ArgumentParser()
@@ -21,6 +23,7 @@ def parse_config():
     parser.add_argument("--group_size", type=int, default=1)
 
     return parser.parse_args()
+
 args = parse_config()
 
 
@@ -29,7 +32,7 @@ nb_classes = 3
 num_not_regulate = 7000
 
 
-dim_net = 128
+dim_net = 256
 dim_exp = 130
 a = dim_exp
 b = a + dim_exp
@@ -119,7 +122,7 @@ for file_name in os.listdir(duplex_directory):
 
             alldata = np.vstack((positive2_data, positive1_data))
             alldata = np.vstack((alldata, negative0_data))
-            random.shuffle(alldata)
+            np.random.shuffle(alldata)
 
             dataX_tf, dataX_target, net_tf_s, net_tf_t, net_target_s, net_target_t, labelY, position = three_utils_2_single.transform_data_single_net(alldata)
 
@@ -167,7 +170,7 @@ for file_name in os.listdir(duplex_directory):
                 testX_net_target_t = torch.from_numpy(testX[:, :, e:f]).float()
 
                 classifier = corrresnet_pred.Classifier(args, output_directory, nb_classes, trainXX_tf, trainXX_target, trainXX_net_tf_s, trainXX_net_tf_t, trainXX_net_target_s, trainXX_net_target_t, verbose=True, patience=5)
-
+                classifier = classifier.to(device)
                 score_1, score_int = classifier.fit_5CV(trainXX_tf, trainXX_target, trainXX_net_tf_s, trainXX_net_tf_t, trainXX_net_target_s, trainXX_net_target_t, trainYY, testXX_tf, testXX_target, testXX_net_tf_s, testXX_net_tf_t, testXX_net_target_s, testXX_net_target_t, testYY, testX_tf, testX_target, testX_net_tf_s, testX_net_tf_t, testX_net_target_s, testX_net_target_t)
 
                 testY_int = np.argmax(testY, axis=1)
