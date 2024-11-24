@@ -23,14 +23,13 @@ def parse_config():
     return parser.parse_args()
 args = parse_config()
 
-
-
 iteration = 10
 nb_classes = 3
-num_not_regulate = 6000
+num_negative = 2046
+
 
 dim_net = 128
-dim_exp = 42
+dim_exp = 33
 a = dim_exp
 b = a + dim_exp
 c = b + dim_net
@@ -38,24 +37,22 @@ d = c + dim_net
 e = d + dim_net
 f = e + dim_net
 
-path_network_name_type = 'traindataHuman/final_GRN/new_GRN_COVID_GEN_counts_genename.csv'
-
-path_expression = 'traindataHuman/final_expression/COVID_GEN_counts.csv'
-path_network_ids = 'traindataHuman/final_GRN_ids/new_GRN_COVID_GEN_counts_genename_ids.tsv'
-path_node = 'traindataHuman/final_genelist_txt/new_exp_COVID_GEN_counts_genename_ids.txt'
+path_network_name_type = 'traindata/Ecoli_GRN_3types.csv'
+path_expression = 'traindata/final_Ecoli_oxidative.csv'
+path_network_ids = 'traindata/Ecoli_GRN_3types_ids.tsv'
+path_node = 'traindata/gene2205_2.txt'
 
 output_directory = './output_directory/'
 if not os.path.isdir(output_directory):
     os.makedirs(output_directory)
+
 logTime = time.strftime("%Y-%m-%d-%H%M%S", time.localtime())
-network_dict_name = 'COVIDS_counts_'  + str(dim_net) + '_' + logTime
+network_dict_name = 'Ecoli_oxidative_' + str(dim_net) + '_' + logTime
 save_index_path = './results/'
 if not os.path.isdir(save_index_path):
     os.makedirs(save_index_path)
 
 EXP_cold_raw = pd.read_csv(path_expression, sep='\,', header=None,engine='python')
-# 剔除最后两行
-EXP_cold_raw = EXP_cold_raw.iloc[:-2]
 EXP_cold = EXP_cold_raw.loc[1:,1:]
 EXP_cold = np.array(EXP_cold)
 EXP_cold_new = np.zeros((EXP_cold.shape[0],EXP_cold.shape[1]))
@@ -69,7 +66,6 @@ genename = np.array(genename)
 Ecoli_GRN_known = pd.read_csv(path_network_name_type, sep='\,', header=None,engine='python')
 
 Ecoli_GRN, num_activator, num_repressor, num_unknown = three_utils_2_single.get_GRN(Ecoli_GRN_known,genename)
-
 # 存储最高指标及对应文件名的变量
 best_scores = {
     "AUROC_mean": {"value": 0, "file_name": ""},
@@ -83,7 +79,7 @@ best_scores = {
 # 遍历duplex目录下的所有npz文件
 # 使用相对路径
 base_dir = os.path.dirname(__file__)  # 获取当前脚本所在的目录
-duplex_directory = os.path.join(base_dir, '..', '..', 'DUPLEX-master', 'saveGraphEmbedding', 'human')
+duplex_directory = os.path.join(base_dir, '..', '..', 'DUPLEX-master', 'saveGraphEmbedding', 'ecoli')
 for file_name in os.listdir(duplex_directory):
     if file_name.endswith('.npz'):
         npz_path = os.path.join(duplex_directory, file_name)
@@ -114,12 +110,12 @@ for file_name in os.listdir(duplex_directory):
         for ki in range(iteration):
             print("\nthe {}th five-fold cross-validation..........\n".format(ki + 1))
 
-            positive2_data, positive1_data, negative0_data, feature_size_tf, feature_size_target, feature_size_tf_nets = three_utils_2_single.create_samples_human_counts(
-                EXP_cold_new, Ecoli_GRN, GRN_embedding_s, GRN_embedding_t, num_not_regulate)
+            positive2_data, positive1_data, negative0_data, feature_size_tf, feature_size_target, feature_size_tf_nets = three_utils_2_single.create_samples_single_net(
+                EXP_cold_new, Ecoli_GRN, GRN_embedding_s, GRN_embedding_t, num_negative)
 
             alldata = np.vstack((positive2_data, positive1_data))
             alldata = np.vstack((alldata, negative0_data))
-            random.shuffle(alldata)
+            np.random.shuffle(alldata)
 
             dataX_tf, dataX_target, net_tf_s, net_tf_t, net_target_s, net_target_t, labelY, position = three_utils_2_single.transform_data_single_net(alldata)
 

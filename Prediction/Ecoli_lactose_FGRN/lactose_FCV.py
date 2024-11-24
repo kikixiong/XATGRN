@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split, KFold
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import confusion_matrix, f1_score,accuracy_score,recall_score,precision_score,matthews_corrcoef
 import three_utils_2_single
-import corrresnet_pred_224 as corrresnet_pred
+import corrresnet_pred_192 as corrresnet_pred
 import os
 os.environ['CUDA_VISIBLE_DEVICES']="0"
 
@@ -28,7 +28,7 @@ nb_classes = 3
 num_negative = 2046
 
 dim_net = 128
-dim_exp = 24
+dim_exp = 12
 a = dim_exp
 b = a + dim_exp
 c = b + dim_net
@@ -37,8 +37,7 @@ e = d + dim_net
 f = e + dim_net
 
 path_network_name_type = 'traindata/Ecoli_GRN_3types.csv'
-path_expression = 'traindata/final_Ecoli_heat.csv'
-
+path_expression = 'traindata/final_Ecoli_lactose.csv'
 path_network_ids = 'traindata/Ecoli_GRN_3types_ids.tsv'
 path_node = 'traindata/gene2205_2.txt'
 
@@ -47,7 +46,7 @@ if not os.path.isdir(output_directory):
     os.makedirs(output_directory)
 
 logTime = time.strftime("%Y-%m-%d-%H%M%S", time.localtime())
-network_dict_name = 'Ecoli_heat_' + str(dim_net) + '_' + logTime
+network_dict_name = 'Ecoli_lactose_' + str(dim_net) + '_' + logTime
 save_index_path = './results/'
 if not os.path.isdir(save_index_path):
     os.makedirs(save_index_path)
@@ -63,9 +62,7 @@ for i in range(EXP_cold.shape[0]):
 genename = EXP_cold_raw.loc[1:,0]
 genename = np.array(genename)
 
-
 Ecoli_GRN_known = pd.read_csv(path_network_name_type, sep='\,', header=None,engine='python')
-
 
 Ecoli_GRN, num_activator, num_repressor, num_unknown = three_utils_2_single.get_GRN(Ecoli_GRN_known,genename)
 
@@ -124,7 +121,7 @@ for file_name in os.listdir(duplex_directory):
 
             alldata = np.vstack((positive2_data, positive1_data))
             alldata = np.vstack((alldata, negative0_data))
-            random.shuffle(alldata)
+            np.random.shuffle(alldata)
 
             dataX_tf, dataX_target, net_tf_s, net_tf_t, net_target_s, net_target_t, labelY, position = three_utils_2_single.transform_data_single_net(alldata)
 

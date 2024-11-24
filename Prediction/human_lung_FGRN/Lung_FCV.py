@@ -7,10 +7,12 @@ from sklearn.model_selection import train_test_split, KFold
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import confusion_matrix, f1_score,accuracy_score,recall_score,precision_score,matthews_corrcoef
 import three_utils_2_single
-import corrresnet_pred_160 as corrresnet_pred
+import corrresnet_pred_224 as corrresnet_pred
 import os
-os.environ['CUDA_VISIBLE_DEVICES']="0"
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+os.environ['CUDA_VISIBLE_DEVICES']="0"
 import argparse
 def parse_config():
     parser = argparse.ArgumentParser()
@@ -21,15 +23,17 @@ def parse_config():
     parser.add_argument("--group_size", type=int, default=1)
 
     return parser.parse_args()
-args = parse_config()
 
+args = parse_config()
 
 
 iteration = 10
 nb_classes = 3
-num_negative = 6000
-dim_net = 128
-dim_exp = 24
+num_not_regulate = 7000
+
+
+dim_net = 256
+dim_exp = 130
 a = dim_exp
 b = a + dim_exp
 c = b + dim_net
@@ -37,22 +41,22 @@ d = c + dim_net
 e = d + dim_net
 f = e + dim_net
 
-path_network_name_type = 'traindataHuman/final_GRN/new_GRN_Breast_GEN_counts_genename.csv'
+path_network_name_type = 'traindataHuman/final_GRN/new_GRN_Lung_GEN_counts_genename.csv'
 
-path_expression = 'traindataHuman/final_expression/Breast_GEN_counts.csv'
-path_network_ids = 'traindataHuman/final_GRN_ids/new_GRN_Breast_GEN_counts_genename_ids.tsv'
-path_node = 'traindataHuman/final_genelist_txt/new_exp_Breast_GEN_counts_genename_ids.txt'
+path_expression = 'traindataHuman/final_expression/Lung_GEN_counts.csv'
+path_network_ids = 'traindataHuman/final_GRN_ids/new_GRN_Lung_GEN_counts_genename_ids.tsv'
+path_node = 'traindataHuman/final_genelist_txt/new_exp_Lung_GEN_counts_genename_ids.txt'
 
 output_directory = './output_directory/'
 if not os.path.isdir(output_directory):
     os.makedirs(output_directory)
 logTime = time.strftime("%Y-%m-%d-%H%M%S", time.localtime())
-network_dict_name = 'Breast_counts_'  + str(dim_net) + '_' + logTime
+network_dict_name = 'Lung_counts_'  + str(dim_net) + '_' + logTime
 save_index_path = './results/'
 if not os.path.isdir(save_index_path):
     os.makedirs(save_index_path)
 
-EXP_cold_raw = pd.read_csv(path_expression, sep='\,', header=None, engine='python')
+EXP_cold_raw = pd.read_csv(path_expression, sep='\,', header=None,engine='python')
 # 剔除最后两行
 EXP_cold_raw = EXP_cold_raw.iloc[:-2]
 EXP_cold = EXP_cold_raw.loc[1:,1:]
@@ -114,11 +118,11 @@ for file_name in os.listdir(duplex_directory):
             print("\nthe {}th five-fold cross-validation..........\n".format(ki + 1))
 
             positive2_data, positive1_data, negative0_data, feature_size_tf, feature_size_target, feature_size_tf_nets = three_utils_2_single.create_samples_human_counts(
-                EXP_cold_new, Ecoli_GRN, GRN_embedding_s, GRN_embedding_t, num_negative)
+                EXP_cold_new, Ecoli_GRN, GRN_embedding_s, GRN_embedding_t, num_not_regulate)
 
             alldata = np.vstack((positive2_data, positive1_data))
             alldata = np.vstack((alldata, negative0_data))
-            random.shuffle(alldata)
+            np.random.shuffle(alldata)
 
             dataX_tf, dataX_target, net_tf_s, net_tf_t, net_target_s, net_target_t, labelY, position = three_utils_2_single.transform_data_single_net(alldata)
 
@@ -166,7 +170,7 @@ for file_name in os.listdir(duplex_directory):
                 testX_net_target_t = torch.from_numpy(testX[:, :, e:f]).float()
 
                 classifier = corrresnet_pred.Classifier(args, output_directory, nb_classes, trainXX_tf, trainXX_target, trainXX_net_tf_s, trainXX_net_tf_t, trainXX_net_target_s, trainXX_net_target_t, verbose=True, patience=5)
-
+                classifier = classifier.to(device)
                 score_1, score_int = classifier.fit_5CV(trainXX_tf, trainXX_target, trainXX_net_tf_s, trainXX_net_tf_t, trainXX_net_target_s, trainXX_net_target_t, trainYY, testXX_tf, testXX_target, testXX_net_tf_s, testXX_net_tf_t, testXX_net_target_s, testXX_net_target_t, testYY, testX_tf, testX_target, testX_net_tf_s, testX_net_tf_t, testX_net_target_s, testX_net_target_t)
 
                 testY_int = np.argmax(testY, axis=1)
