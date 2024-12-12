@@ -1,7 +1,6 @@
 # XATGRN
 
-This repository contains the official implementation of the Cross-Attention Complex Dual Graph Embedding Model (XATGRN), a state-of-the-art computational framework for inferring Gene Regulatory Networks (GRNs) from gene expression data. XATGRN addresses critical challenges in GRN inference, including the skewed degree distribution of genes, the directionality of regulatory relationships, and the need for capturing complex gene interactions.
-
+This repository contains the implementation of the Cross-Attention Complex Dual Graph Embedding Model (XATGRN), a computational framework for inferring Gene Regulatory Networks (GRNs) . XATGRN features a cross-attention-based fusion module that extracts key details from gene expression profiles, enhancing gene representations and our understanding of gene-gene interactions. Its dual complex graph embedding in the relation graph module effectively tackles GRNs' skewed degree distribution, generating embeddings to accurately capture regulatory relationship.
 ## Environment Setup
 
 ```
