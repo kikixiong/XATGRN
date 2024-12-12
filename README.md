@@ -1,6 +1,6 @@
 # XATGRN
 
-
+This repository contains the official implementation of the Cross-Attention Complex Dual Graph Embedding Model (XATGRN), a state-of-the-art computational framework for inferring Gene Regulatory Networks (GRNs) from gene expression data. XATGRN addresses critical challenges in GRN inference, including the skewed degree distribution of genes, the directionality of regulatory relationships, and the need for capturing complex gene interactions.
 
 ## Environment Setup
 
@@ -44,7 +44,7 @@ There are 9 datasets to be evaluated, and each dataset script needs to be execut
 **example usage for DREAM5net1 datasets**
 
 ```
-cd GRN
+cd Prediction
 cd DREAM5_net1_FGRN
 python DREAM5net1_FCV.py
 ```
